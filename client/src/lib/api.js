@@ -1,11 +1,18 @@
 import axios from "axios";
 
+// Use environment variable or fallback to production URL
+const API_URL = import.meta.env.VITE_API_URL || "https://linksphere-d52y.onrender.com/api";
+
 const api = axios.create({
-    baseURL: "https://linksphere-d52y.onrender.com/api",
+  baseURL: API_URL,
+  withCredentials: true,
   headers: {
     "Content-Type": "application/json",
   },
 });
+
+// Log API URL for debugging
+console.log("API URL:", API_URL);
 
 // Request interceptor to add token
 api.interceptors.request.use(

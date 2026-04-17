@@ -15,16 +15,9 @@ export async function connectDB() {
       return;
     }
 
-    // Disconnect if already connected
-    if (mongoose.connection.readyState !== 0) {
-      await mongoose.disconnect();
-    }
-
-    // Connect with options
     await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 10000,
       socketTimeoutMS: 45000,
-      connectTimeoutMS: 10000,
     });
 
     isConnected = true;
@@ -40,7 +33,7 @@ export function isDBConnected() {
   return mongoose.connection.readyState === 1;
 }
 
-// Monitor connection
+// Handle connection events
 mongoose.connection.on("disconnected", () => {
   console.log("⚠️ MongoDB disconnected");
   isConnected = false;
