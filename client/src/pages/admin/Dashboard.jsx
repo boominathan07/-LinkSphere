@@ -1,0 +1,1 @@
+import AdminDashboardPage from "./pages/admin"; // Instead of ./pages/admin/AdminDashboardPage

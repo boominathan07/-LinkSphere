@@ -1,0 +1,100 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+client/dist/
+
+server/dist/
+
+# Environment files
+.env
+.env.*
+!.env.example
+.env.local
+.env.production
+.env.development
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+.project
+.classpath
+.settings/
+
+# Testing
+coverage/
+.nyc_output/
+test-results/
+*.test.js.snap
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.mongodb
+
+# Uploads & Temp
+uploads/
+temp/
+tmp/
+*.tmp
+*.temp
+
+# Secrets
+*.pem
+*.key
+*.crt
+*.p12
+*.secret
+
+# Docker
+.docker/
+Dockerfile.local
+docker-compose.override.yml
+
+# Misc
+*.pid
+*.seed
+*.gz
+*.tgz
+*.rar
+*.7z
+*.bak
+*.backup
+*.old
+*.orig
+
+# PM2
+.pm2/
+pm2-*.log
+
+# Environment specific
+.env.development.local
+.env.test.local
+.env.production.local

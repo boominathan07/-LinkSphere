@@ -1,0 +1,42 @@
+/* Geist + Geist Mono: same family as Vercel Geist (self-hosted via Fontsource) */
+@import "@fontsource/geist/400.css";
+@import "@fontsource/geist/500.css";
+@import "@fontsource/geist/600.css";
+@import "@fontsource/geist-mono/400.css";
+@import "@fontsource/geist-mono/500.css";
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    @apply border-border-default;
+  }
+
+  body {
+    @apply bg-bg-base text-text-primary font-body antialiased;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgb(108 99 255 / 0.18), transparent 28%),
+      radial-gradient(circle at 85% 70%, rgb(0 212 255 / 0.14), transparent 24%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100%;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-glass;
+  }
+
+  .neon-button {
+    @apply rounded-full bg-gradient-to-br from-accent-violet-soft to-accent-violet px-5 py-2.5 font-medium text-white shadow-glow transition duration-300 ease-out;
+  }
+}
