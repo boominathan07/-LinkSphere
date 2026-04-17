@@ -61,7 +61,7 @@ if (process.env.NODE_ENV !== "test") {
 // Rate limiters
 const authLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: process.env.NODE_ENV === "production" ? 5 : 50,
+  max:1000,
   standardHeaders: true,
   legacyHeaders: false,
   skip: (req) => {
@@ -78,7 +78,7 @@ const authLimiter = rateLimit({
 
 const apiLimiter = rateLimit({
   windowMs: 60 * 1000,
-  max: process.env.NODE_ENV === "production" ? 240 : 1200,
+  max:10000,
   standardHeaders: true,
   legacyHeaders: false,
   message: { message: "Too many requests. Please slow down." }
