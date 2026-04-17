@@ -23,7 +23,7 @@ const AdminAnalyticsPage = lazy(() => import("./pages/AdminAnalyticsPage"));
 const AdminSettingsPage = lazy(() => import("./pages/AdminSettingsPage"));
 
 // Public Pages
-const LandingPage = lazy(() => import("./pages/LandingPage"));
+const LandingPage = lazy(() => import("./pages/LandingPage"));  // ← Only once
 const LoginPage = lazy(() => import("./pages/LoginPage"));
 const RegisterPage = lazy(() => import("./pages/RegisterPage"));
 const OnboardingPage = lazy(() => import("./pages/OnboardingPage"));
@@ -42,7 +42,7 @@ function App() {
   return (
     <Suspense fallback={<div className="p-6 text-sm text-slate-400">Loading...</div>}>
       <Routes>
-        <Route path="/" element={<Navigate to={getDefaultRoute()} replace />} />
+        <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/onboarding" element={<OnboardingPage />} />
