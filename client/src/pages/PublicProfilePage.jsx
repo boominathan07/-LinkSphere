@@ -77,15 +77,19 @@ const { data, error, isPending, isError, refetch } = useQuery({
     ].filter((item) => item.href);
   }, [data]);
 
-  const handleShare = () => {
-    const url = window.location.href;
-    navigator.clipboard.writeText(url);
-    alert("Profile link copied to clipboard! 📋");
-    setShowShareMenu(false);
-  };
+const handleShare = () => {
+  const url = window.location.href;
+  navigator.clipboard.writeText(url);
+  alert("Profile link copied to clipboard! 📋");
+  setShowShareMenu(false);
+};
 
-  const user = data?.user;
-  const isProOrBusiness = user?.plan === "pro" || user?.plan === "business";
+const user = data?.user;
+const links = data?.links || [];  // ← ADD THIS LINE
+const isProOrBusiness = user?.plan === "pro" || user?.plan === "business";
+
+
+  
   const showPoweredBy = user?.plan !== "business";
   const pageBg = user ? getPublicPageBackground(user) : { minHeight: "100vh", backgroundColor: "#0D0D1A" };
   const accent = user ? getThemeAccent(user) : "#6C63FF";
