@@ -27,14 +27,16 @@ function PublicProfilePage() {
   const [showQr, setShowQr] = useState(false);
   const [showShareMenu, setShowShareMenu] = useState(false);
   
-  const { data, error, isPending, isError } = useQuery({
-    queryKey: ["public-profile", normalizedUsername],
-    queryFn: async () => {
-      const profile = await api.get(`/public/${normalizedUsername}`);
-      return profile.data;
-    },
-    enabled: Boolean(normalizedUsername)
-  });
+const { data, error, isPending, isError, refetch } = useQuery({
+  queryKey: ["public-profile", normalizedUsername],
+  queryFn: async () => {
+    const profile = await api.get(`/public/${normalizedUsername}`);
+    return profile.data;
+  },
+  enabled: Boolean(normalizedUsername),
+  staleTime: 0, // Don't cache
+  cacheTime: 0, // Don't cache
+});
   const errorStatus = error?.response?.status;
 
   const visitorSessionId = useMemo(() => {
@@ -169,13 +171,23 @@ function PublicProfilePage() {
 
   if (!user) return null;
 
-  const links = data?.links || [];
+ const user = data?.user;
+const links = data?.links || [];
+
+// ========== ADD THESE PROFILE SETTINGS ==========
+const textColor = user?.textColor || "#FFFFFF";
+const buttonColor = user?.buttonColor || "#6C63FF";
+const customFont = user?.customFont || "geist";
+const bodyFont = user?.bodyFont || "geist";
+const buttonStyle = user?.buttonStyle || "rounded";
+// ================================================
   const isLight = isLightProfileTheme(user);
   const themeDef = getProfileTheme(user.theme);
   const joinFg = ["#39ff14", "#ffd700"].includes(themeDef.button.toLowerCase()) ? "#0f172a" : "#ffffff";
   const coverScrim = isLight
     ? "linear-gradient(to bottom, rgba(15,23,42,0.25), rgba(15,23,42,0.88))"
     : "linear-gradient(to bottom, rgba(13,13,26,0.15), rgba(13,13,26,0.82))";
+
 
   const S = isLight
     ? {
@@ -297,22 +309,40 @@ function PublicProfilePage() {
                 </div>
               </div>
 
-              {/* Name ONLY - NO TICK MARK */}
-              <h1 className={`mt-3 text-center font-display text-xl font-bold ${S.heading}`}>
-                {user.name || "Profile"}
-              </h1>
+            {/* Name with custom font and color */}
+<h1 
+  className={`mt-3 text-center font-display text-xl font-bold ${S.heading}`}
+  style={{ 
+    color: textColor,
+    fontFamily: customFont === "geist" ? "'Geist', system-ui, sans-serif" : 
+                customFont === "inter" ? "Inter, system-ui, sans-serif" :
+                customFont === "poppins" ? "Poppins, system-ui, sans-serif" : 
+                customFont === "space-grotesk" ? "'Space Grotesk', system-ui, sans-serif" : customFont
+  }}
+>
+  {user.name || "Profile"}
+</h1>
 
-              {/* NO USERNAME (@boomi) - REMOVED */}
-
-              {/* Bio */}
-              {bioText ? (
-                <p className={`mt-3 max-w-md text-center text-sm leading-relaxed ${S.bio}`}>{bioText}</p>
-              ) : (
-                <p className={`mt-3 max-w-md text-center text-sm italic ${isLight ? "text-slate-500" : "text-text-muted/70"}`}>
-                  Welcome to my page! ✨
-                </p>
-              )}
-
+{/* Bio with body font and color */}
+{bioText ? (
+  <p 
+    className={`mt-3 max-w-md text-center text-sm leading-relaxed ${S.bio}`}
+    style={{ 
+      color: textColor + "CC",
+      fontFamily: bodyFont === "geist" ? "'Geist', system-ui, sans-serif" : 
+                  bodyFont === "inter" ? "Inter, system-ui, sans-serif" : bodyFont
+    }}
+  >
+    {bioText}
+  </p>
+) : (
+  <p 
+    className={`mt-3 max-w-md text-center text-sm italic ${S.bio}`}
+    style={{ color: textColor + "99" }}
+  >
+    Welcome to my page! ✨
+  </p>
+)}
               {/* Social Links */}
               {socialLinks.length > 0 && (
                 <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
@@ -335,45 +365,73 @@ function PublicProfilePage() {
               )}
             </div>
 
+      
             {/* Links - Linktree Style */}
-            <div className="mt-6 w-full space-y-2.5">
-              {links.length === 0 ? (
-                <p className={`py-6 text-center text-sm ${S.empty}`}>No links yet.</p>
-              ) : (
-                links.map((link, index) => (
-                  <motion.button
-                    key={link._id}
-                    type="button"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.03 }}
-                    onClick={() => onClickLink(link)}
-                    className={`flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm font-medium transition-all hover:scale-[1.01] ${S.linkBtn}`}
-                  >
-                    <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg text-sm leading-none bg-black/10">
-                      {link.thumbnailImage ? (
-                        <img src={link.thumbnailImage} alt="" className="h-full w-full object-cover" />
-                      ) : (
-                        link.icon || "🔗"
-                      )}
-                    </span>
-                    <span className="min-w-0 flex-1 truncate text-center">{link.title}</span>
-                    <ExternalLink className={`h-3.5 w-3.5 shrink-0 ${S.linkExt}`} strokeWidth={2} />
-                  </motion.button>
-                ))
-              )}
-            </div>
+<div className="mt-6 w-full space-y-2.5">
+  {links.length === 0 ? (
+    <p className={`py-6 text-center text-sm ${S.empty}`}>No links yet.</p>
+  ) : (
+    links.map((link, index) => (
+      <motion.button
+        key={link._id}
+        type="button"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: index * 0.03 }}
+        onClick={() => onClickLink(link)}
+        className="flex w-full items-center gap-3 rounded-xl border px-3 py-3 text-left text-sm font-medium transition-all hover:scale-[1.01] focus:outline-none focus:ring-2 focus:ring-offset-2"
+        style={{
+          backgroundColor: buttonColor,
+          color: "#fff",
+          borderColor: "rgba(255,255,255,0.1)",
+          borderRadius: buttonStyle === "pill" 
+            ? "9999px" 
+            : buttonStyle === "square" 
+            ? "0px" 
+            : buttonStyle === "soft" 
+            ? "1rem" 
+            : "0.75rem"
+        }}
+      >
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-lg text-sm leading-none bg-black/10">
+          {link.thumbnailImage ? (
+            <img 
+              src={link.thumbnailImage} 
+              alt="" 
+              className="h-full w-full object-cover"
+              loading="lazy"
+            />
+          ) : (
+            <span role="img" aria-label="link icon">
+              {link.icon || "🔗"}
+            </span>
+          )}
+        </span>
+        <span className="min-w-0 flex-1 truncate text-center">{link.title}</span>
+        <ExternalLink className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+      </motion.button>
+    ))
+  )}
+</div>
 
             {/* Bottom Join Button */}
-            <div className="mt-6 w-full">
-              <button
-                onClick={() => window.open(`/${user.username}`, "_blank")}
-                className={`flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-all hover:scale-[1.01] ${S.linkBtn}`}
-                style={{ backgroundColor: accent, color: "#fff", borderColor: "rgba(255,255,255,0.2)" }}
-              >
-                <span>✨ Join {user.name?.split(" ")[0] || user.username} on LinkSphere</span>
-              </button>
-            </div>
+            {/* Bottom Join Button */}
+<div className="mt-6 w-full">
+  <button
+    onClick={() => window.open(`/${user.username}`, "_blank")}
+    className={`flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-sm font-medium transition-all hover:scale-[1.01]`}
+    style={{
+      backgroundColor: buttonColor,
+      color: "#fff",
+      borderColor: "rgba(255,255,255,0.2)",
+      borderRadius: buttonStyle === "pill" ? "9999px" : 
+                  buttonStyle === "square" ? "0px" : 
+                  buttonStyle === "soft" ? "1rem" : "0.75rem"
+    }}
+  >
+    <span>✨ Join {user.name?.split(" ")[0] || user.username} on LinkSphere</span>
+  </button>
+</div>
 
             {/* Newsletter (Pro/Business) */}
             {isProOrBusiness && (

@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import { FiInstagram, FiTwitter, FiYoutube } from "react-icons/fi";
 import { SiTiktok } from "react-icons/si";
 import { Upload } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 import GlassCard from "../components/ui/GlassCard";
 import NeonButton from "../components/ui/NeonButton";
 import { useLinks } from "../hooks/useLinks";
@@ -208,32 +209,44 @@ function ProfileEditorPage() {
 
   const themeDef = useMemo(() => getProfileTheme(form.theme), [form.theme]);
 
-  const onSave = async () => {
-    try {
-      let animationStyle = form.animationStyle;
-      if (!isPro && animationStyle === "bounce") animationStyle = "none";
+ const onSave = async () => {
+  try {
+    let animationStyle = form.animationStyle;
+    if (!isPro && animationStyle === "bounce") animationStyle = "none";
 
-      const updated = await updateSettings.mutateAsync({
-        name: form.name,
-        bio: form.bio.slice(0, 140),
-        profileImage: form.profileImage,
-        socialLinks: form.socialLinks,
-        theme: form.theme,
-        customBgColor: form.customBgColor,
-        customBgImage: isPro ? form.customBgImage : profile?.customBgImage,
-        customFont: form.customFont,
-        bodyFont: form.bodyFont,
-        buttonStyle: form.buttonStyle,
-        buttonColor: form.buttonColor,
-        textColor: form.textColor,
-        animationStyle
-      });
-      if (updated) setAuth({ user: { ...user, ...updated }, accessToken: useAuthStore.getState().accessToken });
-      toast.success("Profile updated");
-    } catch (error) {
-      toast.error(error?.response?.data?.message || "Failed to save profile changes");
+    const updated = await updateSettings.mutateAsync({
+      name: form.name,
+      bio: form.bio.slice(0, 140),
+      profileImage: form.profileImage,
+      socialLinks: form.socialLinks,
+      theme: form.theme,
+      customBgColor: form.customBgColor,
+      customBgImage: isPro ? form.customBgImage : profile?.customBgImage,
+      customFont: form.customFont,
+      bodyFont: form.bodyFont,
+      buttonStyle: form.buttonStyle,
+      buttonColor: form.buttonColor,
+      textColor: form.textColor,
+      animationStyle
+    });
+    
+    if (updated) {
+      setAuth({ user: { ...user, ...updated }, accessToken: useAuthStore.getState().accessToken });
+      
+      // IMPORTANT: Clear public profile cache
+      if (user?.username) {
+        queryClient.invalidateQueries({ queryKey: ["public-profile", user.username] });
+      }
+      
+      // Also clear any cached profile data
+      queryClient.invalidateQueries({ queryKey: ["settings-profile"] });
     }
-  };
+    
+    toast.success("Profile updated");
+  } catch (error) {
+    toast.error(error?.response?.data?.message || "Failed to save profile changes");
+  }
+};
 
   const previewMotion = (i) => {
     if (form.animationStyle === "bounce" && isPro) {

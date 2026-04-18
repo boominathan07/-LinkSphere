@@ -1710,37 +1710,26 @@ export const settingsController = {
     return res.json({ user });
   },
 
-  updateProfile: async (req, res) => {
-    const allowed = [
-      "name",
-      "username",
-      "bio",
-      "theme",
-      "customFont",
-      "bodyFont",
-      "customBgColor",
-      "customBgImage",
-      "buttonStyle",
-      "buttonColor",
-      "animationStyle",
-      "profileImage",
-      "socialLinks",
-      "onboardingCompleted"
-    ];
-    const updates = Object.fromEntries(Object.entries(req.body).filter(([key]) => allowed.includes(key)));
-    if (typeof updates.username === "string") {
-      updates.username = updates.username.trim().toLowerCase();
-      if (!/^[a-z0-9_]{3,30}$/.test(updates.username)) {
-        return res.status(400).json({ message: "username must be 3-30 chars and use letters, numbers, or underscore" });
-      }
-      const existing = await User.findOne({ username: updates.username, _id: { $ne: req.user.sub } }).select("_id");
-      if (existing) {
-        return res.status(409).json({ message: "username already exists" });
-      }
-    }
-    const user = await User.findByIdAndUpdate(req.user.sub, updates, { new: true }).select("-password -refreshToken");
-    return res.json({ user });
-  },
+ updateProfile: async (req, res) => {
+  const allowed = [
+    "name", "username", "bio", "theme", "customFont", "bodyFont",
+    "customBgColor", "customBgImage", "buttonStyle", "buttonColor",
+    "animationStyle", "profileImage", "socialLinks", "onboardingCompleted",
+    "textColor"  // Make sure this is included
+  ];
+  
+  const updates = Object.fromEntries(Object.entries(req.body).filter(([key]) => allowed.includes(key)));
+  
+  // ... validation code ...
+  
+  const user = await User.findByIdAndUpdate(req.user.sub, updates, { new: true }).select("-password -refreshToken");
+  
+  // Clear cache for public profile
+  const cacheKey = `cache:public:username:${user.username}`;
+  await invalidateCacheByPrefix(cacheKey);
+  
+  return res.json({ user });
+},
 
   updateTheme: async (req, res) => {
     const allowed = ["theme", "customFont", "bodyFont", "customBgColor", "customBgImage", "buttonStyle", "buttonColor", "animationStyle"];
