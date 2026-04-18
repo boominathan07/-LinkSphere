@@ -121,28 +121,25 @@ const onAvatar = async (file) => {
     return;
   }
   
+  // Show preview immediately
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    setAvatarUrl(e.target.result);
+  };
+  reader.readAsDataURL(file);
+  
   const formData = new FormData();
-  formData.append("image", file);  // Try "image" first
+  formData.append("image", file);  // Try different names
   
   try {
-    // Use api instance, NOT fetch
-    const response = await api.post("/profile/avatar", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    
-    console.log("Response:", response.data);
-    
-    if (response.data.user?.profileImage) {
-      setAvatarUrl(response.data.user.profileImage);
-      toast.success("Photo uploaded!");
-    } else {
-      toast.error(response.data.message || "Upload failed");
-    }
+    const response = await api.post("/profile/avatar", formData);
+    console.log("SUCCESS:", response.data);
+    toast.success("Photo uploaded!");
   } catch (error) {
-    console.error("Upload error:", error);
-    toast.error(error?.response?.data?.message || "Upload failed");
+    console.log("ERROR RESPONSE:", error.response?.data);
+    console.log("ERROR STATUS:", error.response?.status);
+    console.log("ERROR MESSAGE:", error.response?.data?.message);
+    toast.error(error.response?.data?.message || "Upload failed");
   }
 };
   const onCustomizeNext = async () => {
