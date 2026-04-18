@@ -1,0 +1,11 @@
+# Create .vercelignore in client directory
+echo "node_modules
+.git
+README.md
+.vscode
+.env.local
+.env.development" > .vercelignore
+
+git add .vercelignore
+git commit -m "add vercelignore"
+git push
