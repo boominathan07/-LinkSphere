@@ -12,17 +12,30 @@ function LandingPage() {
       <p className="mt-6 max-w-2xl text-text-muted">
         LinkSphere is the high-density command center for creators who want beautiful pages, true audience ownership, and deep click intelligence.
       </p>
-      <div className="mt-10 flex gap-4">
-        <Link to="/dashboard">
-          <NeonButton>Launch Dashboard</NeonButton>
-        </Link>
-        <Link to="/login" className="rounded-full border border-white/15 px-5 py-2.5 text-sm text-text-primary">
-          Login
-        </Link>
-        <Link to="/register" className="rounded-full border border-accent-cyan/30 px-5 py-2.5 text-sm text-accent-cyan">
-          Register
-        </Link>
-      </div>
+    <div className="mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4 w-full max-w-full overflow-x-hidden px-4 sm:px-0">
+  {/* Dashboard Button */}
+  <Link to="/dashboard" className="w-full sm:w-auto">
+    <button className="w-full rounded-full bg-gradient-to-r from-purple-600 to-purple-700 px-4 sm:px-6 py-2.5 text-sm font-semibold text-white shadow-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-300 whitespace-nowrap">
+      Launch Dashboard
+    </button>
+  </Link>
+  
+  {/* Login Button */}
+  <Link 
+    to="/login" 
+    className="w-full sm:w-auto rounded-full border border-gray-500 bg-transparent px-4 sm:px-6 py-2.5 text-sm font-semibold text-gray-300 text-center hover:bg-gray-800 hover:border-gray-400 transition-all duration-300"
+  >
+    Login
+  </Link>
+  
+  {/* Register Button */}
+  <Link 
+    to="/register" 
+    className="w-full sm:w-auto rounded-full border border-cyan-500 bg-cyan-500/10 px-4 sm:px-6 py-2.5 text-sm font-semibold text-cyan-400 text-center hover:bg-cyan-500 hover:text-white transition-all duration-300"
+  >
+    Register
+  </Link>
+</div>
       
     </div>
   );
