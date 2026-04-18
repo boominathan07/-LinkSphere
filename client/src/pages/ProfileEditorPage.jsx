@@ -145,7 +145,7 @@ function ProfileEditorPage() {
 const uploadAvatarMutation = useMutation({
   mutationFn: async (file) => {
     const fd = new FormData();
-    fd.append("image", file);  // CHANGE from "file" to "image"
+    fd.append("avatar", file);  // Use "avatar" (same as cover)
     
     const { data } = await api.post("/profile/avatar", fd, {
       headers: {
@@ -168,7 +168,7 @@ const uploadAvatarMutation = useMutation({
     toast.success("Avatar uploaded");
   },
   onError: (error) => {
-    console.error("Upload error:", error?.response?.data);
+    console.error("Avatar upload error:", error?.response?.data);
     toast.error(error?.response?.data?.message || "Avatar upload failed");
   }
 });
@@ -213,7 +213,7 @@ const uploadCoverMutation = useMutation({
     [uploadAvatarMutation]
   );
 
- const onAvatarChange = useCallback(
+const onAvatarChange = useCallback(
   (event) => {
     const file = event.target.files?.[0];
     if (file) {
