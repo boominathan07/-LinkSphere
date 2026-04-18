@@ -140,45 +140,69 @@ function ProfileEditorPage() {
 
   const previewLinks = useMemo(() => links.slice(0, 5), [links]);
 
-  const uploadAvatarMutation = useMutation({
-    mutationFn: async (file) => {
-      const fd = new FormData();
-      fd.append("file", file);
-      const { data } = await api.post("/profile/avatar", fd);
-      return data.user;
-    },
-    onSuccess: (nextUser) => {
-      queryClient.invalidateQueries({ queryKey: ["settings-profile"] });
-      if (nextUser?.profileImage) {
-        setForm((prev) => ({ ...prev, profileImage: nextUser.profileImage }));
-      }
-      if (nextUser) setAuth({ user: { ...user, ...nextUser }, accessToken: useAuthStore.getState().accessToken });
-      toast.success("Avatar uploaded");
-    },
-    onError: (error) => {
-      toast.error(error?.response?.data?.message || "Avatar upload failed");
-    }
-  });
+// Find this section (around line 145-160) and REPLACE with:
 
-  const uploadCoverMutation = useMutation({
-    mutationFn: async (file) => {
-      const fd = new FormData();
-      fd.append("file", file);
-      const { data } = await api.post("/profile/cover", fd);
-      return data.user;
-    },
-    onSuccess: (nextUser) => {
-      queryClient.invalidateQueries({ queryKey: ["settings-profile"] });
-      if (nextUser?.customBgImage) {
-        setForm((prev) => ({ ...prev, customBgImage: nextUser.customBgImage }));
-      }
-      if (nextUser) setAuth({ user: { ...user, ...nextUser }, accessToken: useAuthStore.getState().accessToken });
-      toast.success("Background image uploaded");
-    },
-    onError: (error) => {
-      toast.error(error?.response?.data?.message || "Cover upload failed");
+const uploadAvatarMutation = useMutation({
+  mutationFn: async (file) => {
+    const fd = new FormData();
+    fd.append("image", file);  // CHANGE from "file" to "image"
+    
+    const { data } = await api.post("/profile/avatar", fd, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return data.user;
+  },
+  onSuccess: (nextUser) => {
+    queryClient.invalidateQueries({ queryKey: ["settings-profile"] });
+    if (nextUser?.profileImage) {
+      setForm((prev) => ({ ...prev, profileImage: nextUser.profileImage }));
     }
-  });
+    if (nextUser) {
+      setAuth({ 
+        user: { ...user, ...nextUser }, 
+        accessToken: useAuthStore.getState().accessToken 
+      });
+    }
+    toast.success("Avatar uploaded");
+  },
+  onError: (error) => {
+    console.error("Upload error:", error?.response?.data);
+    toast.error(error?.response?.data?.message || "Avatar upload failed");
+  }
+});
+
+const uploadCoverMutation = useMutation({
+  mutationFn: async (file) => {
+    const fd = new FormData();
+    fd.append("image", file);  // CHANGE from "file" to "image"
+    
+    const { data } = await api.post("/profile/cover", fd, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return data.user;
+  },
+  onSuccess: (nextUser) => {
+    queryClient.invalidateQueries({ queryKey: ["settings-profile"] });
+    if (nextUser?.customBgImage) {
+      setForm((prev) => ({ ...prev, customBgImage: nextUser.customBgImage }));
+    }
+    if (nextUser) {
+      setAuth({ 
+        user: { ...user, ...nextUser }, 
+        accessToken: useAuthStore.getState().accessToken 
+      });
+    }
+    toast.success("Background image uploaded");
+  },
+  onError: (error) => {
+    console.error("Cover upload error:", error?.response?.data);
+    toast.error(error?.response?.data?.message || "Cover upload failed");
+  }
+});
 
   const onAvatarDrop = useCallback(
     (event) => {
@@ -189,15 +213,24 @@ function ProfileEditorPage() {
     [uploadAvatarMutation]
   );
 
-  const onAvatarChange = useCallback(
-    (event) => {
-      const file = event.target.files?.[0];
-      if (file) uploadAvatarMutation.mutate(file);
-      event.target.value = "";
-    },
-    [uploadAvatarMutation]
-  );
-
+ const onAvatarChange = useCallback(
+  (event) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Show preview immediately
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setForm(prev => ({ ...prev, profileImage: e.target.result }));
+      };
+      reader.readAsDataURL(file);
+      
+      // Upload to server
+      uploadAvatarMutation.mutate(file);
+    }
+    event.target.value = "";
+  },
+  [uploadAvatarMutation]
+);
   const onCoverChange = useCallback(
     (event) => {
       const file = event.target.files?.[0];
