@@ -122,7 +122,7 @@ const onAvatar = async (file) => {
   }
   
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append("image", file);
   
   try {
     const token = localStorage.getItem("accessToken");
