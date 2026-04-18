@@ -122,32 +122,27 @@ const onAvatar = async (file) => {
   }
   
   const formData = new FormData();
-  formData.append("image", file);
+  formData.append("image", file);  // Try "image" first
   
   try {
-    const token = localStorage.getItem("accessToken");
-    console.log("Token:", token ? "Exists" : "Missing");
-    
-    const response = await fetch("http://localhost:5000/api/profile/avatar", {
-      method: "POST",
+    // Use api instance, NOT fetch
+    const response = await api.post("/profile/avatar", formData, {
       headers: {
-        "Authorization": `Bearer ${token}`
+        "Content-Type": "multipart/form-data",
       },
-      body: formData
     });
     
-    const data = await response.json();
-    console.log("Response:", data);
+    console.log("Response:", response.data);
     
-    if (data.user?.profileImage) {
-      setAvatarUrl(data.user.profileImage);
+    if (response.data.user?.profileImage) {
+      setAvatarUrl(response.data.user.profileImage);
       toast.success("Photo uploaded!");
     } else {
-      toast.error(data.message || "Upload failed");
+      toast.error(response.data.message || "Upload failed");
     }
   } catch (error) {
     console.error("Upload error:", error);
-    toast.error("Upload failed");
+    toast.error(error?.response?.data?.message || "Upload failed");
   }
 };
   const onCustomizeNext = async () => {
