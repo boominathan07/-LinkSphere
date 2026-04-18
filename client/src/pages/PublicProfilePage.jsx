@@ -171,8 +171,6 @@ const { data, error, isPending, isError, refetch } = useQuery({
 
   if (!user) return null;
 
- const user = data?.user;
-const links = data?.links || [];
 
 // ========== ADD THESE PROFILE SETTINGS ==========
 const textColor = user?.textColor || "#FFFFFF";

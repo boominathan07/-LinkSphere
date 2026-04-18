@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import { FiInstagram, FiTwitter, FiYoutube } from "react-icons/fi";
 import { SiTiktok } from "react-icons/si";
 import { Upload } from "lucide-react";
-import { useQueryClient } from "@tanstack/react-query";
 import GlassCard from "../components/ui/GlassCard";
 import NeonButton from "../components/ui/NeonButton";
 import { useLinks } from "../hooks/useLinks";
