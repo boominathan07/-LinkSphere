@@ -4,7 +4,7 @@ import confetti from "canvas-confetti";
 import toast from "react-hot-toast";
 import GlassCard from "../components/ui/GlassCard";
 import NeonButton from "../components/ui/NeonButton";
-import api from "../lib/api";
+import api from "../lib/api";  // This MUST be there
 import { getPublicProfileHost } from "../lib/publicProfileUrl";
 import { PROFILE_THEMES } from "../lib/profileThemes";
 import { checkUsernameAvailability } from "../hooks/useAuth";
@@ -121,25 +121,30 @@ const onAvatar = async (file) => {
     return;
   }
   
-  // Show preview immediately
+  // Show preview
   const reader = new FileReader();
   reader.onload = (e) => {
     setAvatarUrl(e.target.result);
   };
   reader.readAsDataURL(file);
   
+  // Upload using api
   const formData = new FormData();
-  formData.append("image", file);  // Try different names
+  formData.append("image", file);
   
   try {
     const response = await api.post("/profile/avatar", formData);
-    console.log("SUCCESS:", response.data);
-    toast.success("Photo uploaded!");
+    console.log("Upload success:", response.data);
+    
+    if (response.data.user?.profileImage) {
+      setAvatarUrl(response.data.user.profileImage);
+      toast.success("Photo uploaded!");
+    } else {
+      toast.success("Preview ready! Save to complete.");
+    }
   } catch (error) {
-    console.log("ERROR RESPONSE:", error.response?.data);
-    console.log("ERROR STATUS:", error.response?.status);
-    console.log("ERROR MESSAGE:", error.response?.data?.message);
-    toast.error(error.response?.data?.message || "Upload failed");
+    console.error("Upload error:", error);
+    toast.error(error.response?.data?.message || "Upload failed, but preview is shown");
   }
 };
   const onCustomizeNext = async () => {
