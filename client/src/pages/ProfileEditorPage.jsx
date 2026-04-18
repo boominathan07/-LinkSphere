@@ -145,7 +145,7 @@ function ProfileEditorPage() {
 const uploadAvatarMutation = useMutation({
   mutationFn: async (file) => {
     const fd = new FormData();
-    fd.append("avatar", file);  // Use "avatar" (same as cover)
+    fd.append("file", file);  // Use "avatar" (same as cover)
     
     const { data } = await api.post("/profile/avatar", fd, {
       headers: {
