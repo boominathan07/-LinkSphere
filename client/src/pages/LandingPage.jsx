@@ -16,7 +16,7 @@ function LandingPage() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#04050f] flex items-center justify-center overflow-hidden px-6">
+    <div className="relative w-full min-h-screen bg-[#04050f] flex items-center justify-center overflow-hidden">
 
       {/* ── Grid background ── */}
       <div
@@ -38,7 +38,7 @@ function LandingPage() {
       </div>
 
       {/* ── Main content ── */}
-      <div className="relative z-10 w-full max-w-3xl flex flex-col items-center text-center">
+      <div className="relative z-10 flex flex-col items-center justify-center text-center w-full max-w-3xl mx-auto px-6 py-20">
 
         {/* Badge */}
         <div className="inline-flex items-center gap-2 mb-6 px-4 py-1.5 rounded-full border border-cyan-500/25 bg-cyan-500/5 text-cyan-400 text-[0.65rem] font-medium tracking-[0.12em] uppercase">
@@ -60,15 +60,16 @@ function LandingPage() {
           LinkSphere is the high-density command center for creators who want beautiful pages, true audience ownership, and deep click intelligence.
         </p>
 
-        {/* ── Buttons — same routes ── */}
-        <div className="flex flex-wrap items-center justify-center gap-3 w-full">
+        {/* ── Buttons ── */}
+        <div className="flex flex-row flex-wrap items-center justify-center gap-3">
 
           {/* Launch Dashboard */}
-          <Link to="/dashboard">
-            <button className="group inline-flex items-center gap-2 px-7 py-3 rounded-full bg-gradient-to-r from-violet-600 to-violet-700 border border-violet-500/30 text-white text-sm font-semibold shadow-[0_4px_24px_rgba(109,40,217,0.45)] hover:shadow-[0_0_32px_rgba(124,58,237,0.6)] hover:-translate-y-0.5 hover:scale-[1.02] transition-all duration-300 whitespace-nowrap">
-              Launch Dashboard
-              <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
-            </button>
+          <Link
+            to="/dashboard"
+            className="group inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-gradient-to-r from-violet-600 to-violet-700 border border-violet-500/30 text-white text-sm font-semibold shadow-[0_4px_24px_rgba(109,40,217,0.45)] hover:shadow-[0_0_32px_rgba(124,58,237,0.6)] hover:-translate-y-0.5 hover:scale-[1.02] transition-all duration-300 whitespace-nowrap"
+          >
+            Launch Dashboard
+            <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>
           </Link>
 
           {/* Divider */}
@@ -93,7 +94,7 @@ function LandingPage() {
         </div>
 
         {/* ── Stats strip ── */}
-        <div className="flex items-center gap-8 mt-14 pt-8 border-t border-white/[0.06]">
+        <div className="flex items-center justify-center gap-8 mt-14 pt-8 border-t border-white/[0.06] w-full max-w-sm mx-auto">
           <div className="text-center">
             <div className="text-2xl font-bold text-slate-100 tracking-tight">48K+</div>
             <div className="text-[0.65rem] uppercase tracking-widest text-slate-500 mt-0.5">Creators</div>
